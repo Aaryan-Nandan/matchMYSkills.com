@@ -1,0 +1,55 @@
+{% extends "base_dashboard.html" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<h2 class="page-title">Matched Jobs</h2>
+
+{% if jobs %}
+<div class="job-grid">
+    {% for job in jobs %}
+    <div class="job-card">
+        <h3>{{ job.title }}</h3>
+
+        <p>{{ job.description }}</p>
+
+        <p class="meta">
+            Minimum Experience: {{ job.min_experience }} years
+        </p>
+
+{% if mode == 'skills' %}
+    <p class="skill-match-count">
+        <strong>Skill Match:</strong>
+        {{ job.matched_skills }} / {{ job.total_required }}
+    </p>
+
+    <div class="job-skills">
+        {% for skill in job.required_skills.all %}
+            {% if skill.id in user_skill_ids %}
+                <span class="skill-tag matched">{{ skill.name }}</span>
+            {% else %}
+                <span class="skill-tag not-matched">{{ skill.name }}</span>
+            {% endif %}
+        {% endfor %}
+    </div>
+{% endif %}
+
+        {% if mode == 'resume' %}
+            <p class="badge info">ATS Score: {{ job.ats_score }}%</p>
+        {% endif %}
+
+        {% if job.apply_link %}
+            <a href="{{ job.apply_link }}" target="_blank" class="apply-btn">
+                Apply Now
+            </a>
+        {% else %}
+            <p class="no-link">Application link not available</p>
+        {% endif %}
+    </div>
+    {% endfor %}
+</div>
+{% else %}
+    <p class="empty">No jobs matched your criteria.</p>
+{% endif %}
+
+{% endblock %}
